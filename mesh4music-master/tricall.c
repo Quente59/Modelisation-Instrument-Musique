@@ -29,160 +29,245 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-
-#ifndef TRIANGLE_H
-#define TRIANGLE_H
 #include "triangle.h"
-#endif
-
-#include "triangleIO.h"
-#include "mesh.h"
-
-#include <math.h>
-#include <assert.h>
 
 /*****************************************************************************/
 /*                                                                           */
-/* Our main function                                                         */
+/*  report()   Print the input or output.                                    */
+/*                                                                           */
+/*****************************************************************************/
+
+void report(io, markers, reporttriangles, reportneighbors, reportsegments,
+            reportedges, reportnorms)
+struct triangulateio *io;
+int markers;
+int reporttriangles;
+int reportneighbors;
+int reportsegments;
+int reportedges;
+int reportnorms;
+{
+  int i, j;
+
+  for (i = 0; i < io->numberofpoints; i++) {
+    printf("Point %4d:", i);
+    for (j = 0; j < 2; j++) {
+      printf("  %.6g", io->pointlist[i * 2 + j]);
+    }
+    if (io->numberofpointattributes > 0) {
+      printf("   attributes");
+    }
+    for (j = 0; j < io->numberofpointattributes; j++) {
+      printf("  %.6g",
+             io->pointattributelist[i * io->numberofpointattributes + j]);
+    }
+    if (markers) {
+      printf("   marker %d\n", io->pointmarkerlist[i]);
+    } else {
+      printf("\n");
+    }
+  }
+  printf("\n");
+
+  if (reporttriangles || reportneighbors) {
+    for (i = 0; i < io->numberoftriangles; i++) {
+      if (reporttriangles) {
+        printf("Triangle %4d points:", i);
+        for (j = 0; j < io->numberofcorners; j++) {
+          printf("  %4d", io->trianglelist[i * io->numberofcorners + j]);
+        }
+        if (io->numberoftriangleattributes > 0) {
+          printf("   attributes");
+        }
+        for (j = 0; j < io->numberoftriangleattributes; j++) {
+          printf("  %.6g", io->triangleattributelist[i *
+                                         io->numberoftriangleattributes + j]);
+        }
+        printf("\n");
+      }
+      if (reportneighbors) {
+        printf("Triangle %4d neighbors:", i);
+        for (j = 0; j < 3; j++) {
+          printf("  %4d", io->neighborlist[i * 3 + j]);
+        }
+        printf("\n");
+      }
+    }
+    printf("\n");
+  }
+
+  if (reportsegments) {
+    for (i = 0; i < io->numberofsegments; i++) {
+      printf("Segment %4d points:", i);
+      for (j = 0; j < 2; j++) {
+        printf("  %4d", io->segmentlist[i * 2 + j]);
+      }
+      if (markers) {
+        printf("   marker %d\n", io->segmentmarkerlist[i]);
+      } else {
+        printf("\n");
+      }
+    }
+    printf("\n");
+  }
+
+  if (reportedges) {
+    for (i = 0; i < io->numberofedges; i++) {
+      printf("Edge %4d points:", i);
+      for (j = 0; j < 2; j++) {
+        printf("  %4d", io->edgelist[i * 2 + j]);
+      }
+      if (reportnorms && (io->edgelist[i * 2 + 1] == -1)) {
+        for (j = 0; j < 2; j++) {
+          printf("  %.6g", io->normlist[i * 2 + j]);
+        }
+      }
+      if (markers) {
+        printf("   marker %d\n", io->edgemarkerlist[i]);
+      } else {
+        printf("\n");
+      }
+    }
+    printf("\n");
+  }
+}
+
+/*****************************************************************************/
+/*                                                                           */
+/*  main()   Create and refine a mesh.                                       */
 /*                                                                           */
 /*****************************************************************************/
 
 int main()
 {
-    // Define an input and output data structure for triangle
-    struct triangulateio in, out;
-    
-    
-    // Read formated input representing the contour
-    
-    FILE * pFile = fopen ("contour.txt","r");
-    
-    int nb_point_exterior, nb_point_cavity;
-    
-    fscanf (pFile, "%i %i\n", &nb_point_exterior, &nb_point_cavity);
-    printf("%i %i\n",nb_point_exterior, nb_point_cavity); //TODO: a remplacer
-    
-    // read exterior contour
-    
-    char test1;
-    fscanf (pFile, "%c\n", &test1);
-    assert(test1=='#');
-    
-    float x,y;
-    for(int i=0; i<nb_point_exterior; ++i) {
-        fscanf (pFile, "%f %f\n", &x, &y);
-        printf("%f %f\n",x, y); //TODO: a remplacer
-    }
-    
-    // read contour of cavity
-    
-    char test2;
-    fscanf (pFile, "%c\n", &test2);
-    assert(test2=='#');
-    
-    for(int i=0; i<nb_point_cavity; ++i) {
-        fscanf (pFile, "%f %f\n", &x, &y);
-        printf("%f %f\n",x, y); //TODO: a remplacer
-    }
-    
-    fclose (pFile);
-    
-    
-    //TODO a changer :you should first initialize those values
-    //  in.numberofpoints
-    //  in.pointlist
-    
-    
-    //TODO value to modify after first step is working
-    in.pointmarkerlist = (int *) malloc(in.numberofpoints * sizeof(int));
-    for(int i=0; i<in.numberofpoints; i++) {
-        in.pointmarkerlist[i] = 0;
-    }
-    in.numberofsegments = 0;
-    in.numberofholes = 0;
-    
-    
-    
-    in.numberofpointattributes = 0;
-    in.pointattributelist = (REAL *) NULL;
-    
-    // Can be ignored safely
-    in.numberofregions = 1;
-    in.regionlist = (REAL *) malloc(in.numberofregions * 4 * sizeof(REAL));
-    in.regionlist[0] = 0.5;
-    in.regionlist[1] = 5.0;
-    in.regionlist[2] = 7.0;            /* Regional attribute (for whole mesh). */
-    in.regionlist[3] = 0.1;          /* Area constraint that will not be used. */
-    
-    
-    printf("Input point set:\n\n");
-    report(&in, 1, 0, 0, 0, 0, 0);
-    
-    /* Make necessary initializations so that Triangle can return a triangulation in out */
-    
-    out.pointlist = (REAL *) NULL;            /* Not needed if -N switch used. */
-    /* Not needed if -N switch used or number of point attributes is zero: */
-    out.pointattributelist = (REAL *) NULL;
-    out.pointmarkerlist = (int *) NULL; /* Not needed if -N or -B switch used. */
-    out.trianglelist = (int *) NULL;          /* Not needed if -E switch used. */
-    /* Not needed if -E switch used or number of triangle attributes is zero: */
-    out.triangleattributelist = (REAL *) NULL;
-    out.neighborlist = (int *) NULL;         /* Needed only if -n switch used. */
-    /* Needed only if segments are output (-p or -c) and -P not used: */
-    out.segmentlist = (int *) NULL;
-    /* Needed only if segments are output (-p or -c) and -P and -B not used: */
-    out.segmentmarkerlist = (int *) NULL;
-    out.edgelist = (int *) NULL;             /* Needed only if -e switch used. */
-    out.edgemarkerlist = (int *) NULL;   /* Needed if -e used and -B not used. */
-    
-    triangulate("pcze", &in, &out, (struct triangulateio *) NULL);
-    
-    // Allow the use of program showme to visualize results
-    saveToFiles(&out);
-    //    report(&out, 1, 1, 1, 1, 1, 0);
-    
-    
-    // Build the mesh data-structure
-    
-    struct Mesh mesh;
-    moveAndInit(&out, &mesh);
-    
-    // Initialize value of a test function
-    
-    for(int i = 0; i<mesh.numberofpoints; ++i )
-    {
-        // Initialize function values (use a function that you know how to differentiate analitycally)
-    }
-    
-    // Compute gradient
-    
-    for(int i = 0; i<mesh.numberofpoints; ++i )
-    {
-        // Build Matrix (NB : could be stored in mesh for later use)
-        // Compute Gradient
-        // Compare to closed-form gradient
-    }
-    
-    // Free all the memory
-    free(in.pointlist);
-    free(in.pointattributelist);
-    free(in.pointmarkerlist);
-    free(in.regionlist);
-    free(mesh.pointlist);
-    free(mesh.pointattributelist);
-    free(mesh.pointmarkerlist);
-    free(mesh.trianglelist);
-    free(mesh.triangleattributelist);
-    free(mesh.trianglearealist);
-    free(mesh.neighborlist);
-    free(mesh.segmentlist);
-    free(mesh.segmentmarkerlist);
-    free(mesh.edgelist);
-    free(mesh.edgemarkerlist);
-    free(mesh.numberofNeighbors);
-    free(mesh.neighbors);
-    free(mesh.barycoord);
-    
-    return 0;
-}
+  struct triangulateio in, mid, out, vorout;
 
+  /* Define input points. */
+
+  in.numberofpoints = 4;
+  in.numberofpointattributes = 1;
+  in.pointlist = (REAL *) malloc(in.numberofpoints * 2 * sizeof(REAL));
+  in.pointlist[0] = 0.0;
+  in.pointlist[1] = 0.0;
+  in.pointlist[2] = 1.0;
+  in.pointlist[3] = 0.0;
+  in.pointlist[4] = 1.0;
+  in.pointlist[5] = 10.0;
+  in.pointlist[6] = 0.0;
+  in.pointlist[7] = 10.0;
+  in.pointattributelist = (REAL *) malloc(in.numberofpoints *
+                                          in.numberofpointattributes *
+                                          sizeof(REAL));
+  in.pointattributelist[0] = 0.0;
+  in.pointattributelist[1] = 1.0;
+  in.pointattributelist[2] = 11.0;
+  in.pointattributelist[3] = 10.0;
+  in.pointmarkerlist = (int *) malloc(in.numberofpoints * sizeof(int));
+  in.pointmarkerlist[0] = 0;
+  in.pointmarkerlist[1] = 2;
+  in.pointmarkerlist[2] = 0;
+  in.pointmarkerlist[3] = 0;
+
+  in.numberofsegments = 0;
+  in.numberofholes = 0;
+  in.numberofregions = 1;
+  in.regionlist = (REAL *) malloc(in.numberofregions * 4 * sizeof(REAL));
+  in.regionlist[0] = 0.5;
+  in.regionlist[1] = 5.0;
+  in.regionlist[2] = 7.0;            /* Regional attribute (for whole mesh). */
+  in.regionlist[3] = 0.1;          /* Area constraint that will not be used. */
+
+  printf("Input point set:\n\n");
+  report(&in, 1, 0, 0, 0, 0, 0);
+
+  /* Make necessary initializations so that Triangle can return a */
+  /*   triangulation in `mid' and a voronoi diagram in `vorout'.  */
+
+  mid.pointlist = (REAL *) NULL;            /* Not needed if -N switch used. */
+  /* Not needed if -N switch used or number of point attributes is zero: */
+  mid.pointattributelist = (REAL *) NULL;
+  mid.pointmarkerlist = (int *) NULL; /* Not needed if -N or -B switch used. */
+  mid.trianglelist = (int *) NULL;          /* Not needed if -E switch used. */
+  /* Not needed if -E switch used or number of triangle attributes is zero: */
+  mid.triangleattributelist = (REAL *) NULL;
+  mid.neighborlist = (int *) NULL;         /* Needed only if -n switch used. */
+  /* Needed only if segments are output (-p or -c) and -P not used: */
+  mid.segmentlist = (int *) NULL;
+  /* Needed only if segments are output (-p or -c) and -P and -B not used: */
+  mid.segmentmarkerlist = (int *) NULL;
+  mid.edgelist = (int *) NULL;             /* Needed only if -e switch used. */
+  mid.edgemarkerlist = (int *) NULL;   /* Needed if -e used and -B not used. */
+
+  vorout.pointlist = (REAL *) NULL;        /* Needed only if -v switch used. */
+  /* Needed only if -v switch used and number of attributes is not zero: */
+  vorout.pointattributelist = (REAL *) NULL;
+  vorout.edgelist = (int *) NULL;          /* Needed only if -v switch used. */
+  vorout.normlist = (REAL *) NULL;         /* Needed only if -v switch used. */
+
+  /* Triangulate the points.  Switches are chosen to read and write a  */
+  /*   PSLG (p), preserve the convex hull (c), number everything from  */
+  /*   zero (z), assign a regional attribute to each element (A), and  */
+  /*   produce an edge list (e), a Voronoi diagram (v), and a triangle */
+  /*   neighbor list (n).                                              */
+
+  triangulate("pczAevn", &in, &mid, &vorout);
+
+  printf("Initial triangulation:\n\n");
+  report(&mid, 1, 1, 1, 1, 1, 0);
+  printf("Initial Voronoi diagram:\n\n");
+  report(&vorout, 0, 0, 0, 0, 1, 1);
+
+  /* Attach area constraints to the triangles in preparation for */
+  /*   refining the triangulation.                               */
+
+  /* Needed only if -r and -a switches used: */
+  mid.trianglearealist = (REAL *) malloc(mid.numberoftriangles * sizeof(REAL));
+  mid.trianglearealist[0] = 3.0;
+  mid.trianglearealist[1] = 1.0;
+
+  /* Make necessary initializations so that Triangle can return a */
+  /*   triangulation in `out'.                                    */
+
+  out.pointlist = (REAL *) NULL;            /* Not needed if -N switch used. */
+  /* Not needed if -N switch used or number of attributes is zero: */
+  out.pointattributelist = (REAL *) NULL;
+  out.trianglelist = (int *) NULL;          /* Not needed if -E switch used. */
+  /* Not needed if -E switch used or number of triangle attributes is zero: */
+  out.triangleattributelist = (REAL *) NULL;
+
+  /* Refine the triangulation according to the attached */
+  /*   triangle area constraints.                       */
+
+  triangulate("prazBP", &mid, &out, (struct triangulateio *) NULL);
+
+  printf("Refined triangulation:\n\n");
+  report(&out, 0, 1, 0, 0, 0, 0);
+
+  /* Free all allocated arrays, including those allocated by Triangle. */
+
+  free(in.pointlist);
+  free(in.pointattributelist);
+  free(in.pointmarkerlist);
+  free(in.regionlist);
+  free(mid.pointlist);
+  free(mid.pointattributelist);
+  free(mid.pointmarkerlist);
+  free(mid.trianglelist);
+  free(mid.triangleattributelist);
+  free(mid.trianglearealist);
+  free(mid.neighborlist);
+  free(mid.segmentlist);
+  free(mid.segmentmarkerlist);
+  free(mid.edgelist);
+  free(mid.edgemarkerlist);
+  free(vorout.pointlist);
+  free(vorout.pointattributelist);
+  free(vorout.edgelist);
+  free(vorout.normlist);
+  free(out.pointlist);
+  free(out.pointattributelist);
+  free(out.trianglelist);
+  free(out.triangleattributelist);
+
+  return 0;
+}

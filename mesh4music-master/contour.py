@@ -34,7 +34,7 @@ def pointsExt(event):
 	Ext.append((event.x, event.y))
 	cv.create_oval(event.x+2, event.y+2, event.x-2, event.y-2, fill="black")
 	if len(Ext)>=2 :
-		cv.create_line(Ext[-1], Ext[-2], tags="theline", fill="red")
+		cv.create_line(Ext[-1], Ext[-2], tags="theline", fill="blue")
 	compteurExt += 1
 	print(compteurExt)
 
@@ -53,8 +53,8 @@ def ecriture(event):
 
 
 root.bind("<Key>", ecriture)
-root.bind("<Button-1>", pointsInt)
 root.bind("<Button-3>", pointsExt)
+root.bind("<Button-1>", pointsInt)
 
 root.mainloop()
 
