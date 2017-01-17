@@ -248,6 +248,45 @@ in.segmentlist[2*(nb_point_cavity - 1 + nb_point_exterior) + 1] = nb_point_exter
     struct Mesh mesh;
     moveAndInit(&out, &mesh);
 
+    // correct the id of boundary (as newly created point are of id 1...)
+    // assume 2 type of boundary cannot be connected...
+    int not_finished = 1;
+    while(not_finished) {
+        not_finished = 0;
+        for(int i = 0; i<mesh.n_points; ++i ) {
+            if(mesh.v_boundary_id[i] == 1) {
+                int found = 0;
+                int nn = mesh.nbNeighbors[i];
+                for(int k=0; k<nn; ++k) {
+                    int n_id = mesh.neighbors[i*mesh.nmax+k];
+                    if(mesh.v_boundary_id[n_id]==2) {
+                        mesh.v_boundary_id[i] = 2;
+                        found = 1;
+                    } else if(mesh.v_boundary_id[n_id]==3) {
+                        mesh.v_boundary_id[i] = 3;
+                        found = 1;
+                    }
+                }
+                if(!found) not_finished = 1;
+            }
+        }
+    }
+    
+    // mark neighbors to boundaries
+    for(int i = 0; i<mesh.n_points; ++i ) {
+        if(mesh.v_boundary_id[i] == 0) {
+            int nn = mesh.nbNeighbors[i];
+            for(int k=0; k<nn; ++k) {
+                int n_id = mesh.neighbors[i*mesh.nmax+k];
+                if(mesh.v_boundary_id[n_id]==2) {
+                    mesh.v_boundary_id[i] = -2;
+                }
+            }
+        }
+    }
+
+saveBinaryMesh(&mesh, "binaryMesh.bin");
+
     // Compute gradient
     
 ////////////////////////////////////////////////////////////////

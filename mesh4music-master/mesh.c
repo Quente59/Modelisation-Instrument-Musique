@@ -80,13 +80,31 @@ void buildOpGrad(struct Mesh *mesh, int i, REAL *opM, REAL *B)
 
 
 
-	matrixMult(&invM, B, opM, 2, nn+1, 2);
+	matrixMult(&invM[0], B, opM, 2, nn+1, 2);
 
 
 
 }
 
 /*------------------------------------------------------------------------*/
+
+void computeGradientOperators(struct Mesh *mesh)
+{
+    if(mesh->gradOp!=NULL) {
+	free(mesh->gradOp);
+    }
+
+    unsigned int maxSize = 2*(mesh->nmax+1);
+    mesh->gradOp = (REAL *) malloc(mesh->n_points * maxSize * sizeof(REAL));
+    REAL *B = (REAL *) malloc(maxSize * sizeof(REAL));
+    
+    for(int i = 0; i<mesh->n_points; ++i)
+    {
+    buildOpGrad(mesh, i, &(mesh->gradOp[i*maxSize]), B);
+    }
+
+    free(B);
+}
 
 void moveAndInit(struct triangulateio *in, struct Mesh *mesh)
 {
@@ -139,9 +157,12 @@ void moveAndInit(struct triangulateio *in, struct Mesh *mesh)
     }
     
     mesh->barycoord = NULL;
+    mesh->gradOp = NULL;
     
     // Initialize the generalized barycentric coordinate
     computeMeanValueCoordinates(mesh);
+
+    computeGradientOperators(mesh);
 }
 
 /*------------------------------------------------------------------------*/
@@ -203,4 +224,28 @@ void computeMeanValueCoordinates(struct Mesh *mesh)
 }
 
 /*------------------------------------------------------------------------*/
+
+void saveBinaryMesh(struct Mesh *m, const char* filename)
+{
+    FILE *f = fopen(filename,"wb");
+    
+    fwrite(&(m->n_points), sizeof(int), 1, f);
+    fwrite(&(m->n_triangles), sizeof(int), 1, f);
+    fwrite(&(m->n_edges), sizeof(int), 1, f);
+    
+    fwrite(m->v_points, sizeof(struct vec2), m->n_points, f);
+    fwrite(m->v_triangles, sizeof(struct triangle), m->n_triangles, f);
+    fwrite(m->v_edges, sizeof(struct edge), m->n_edges, f);
+    
+    fwrite(m->v_boundary_id, sizeof(int), m->n_points, f);
+    
+    fwrite(&(m->nmax), sizeof(int), 1, f);
+    
+    fwrite(m->nbNeighbors, sizeof(int), m->n_points, f);
+    fwrite(m->neighbors, sizeof(int), m->n_points*m->nmax, f);
+    fwrite(m->barycoord, sizeof(REAL), m->n_points*m->nmax, f);
+    //fwrite(m->gradOp, sizeof(REAL), m->n_points*(2*(m->nmax+1)), f);
+    
+    fclose(f);
+}
 
