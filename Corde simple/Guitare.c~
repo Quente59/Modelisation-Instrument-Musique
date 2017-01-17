@@ -102,7 +102,7 @@ int main(int argc, char *argv[]){
 			uc[i0] += t*Fmax*dt*dt / (0.02f*freq*rho);
 		}
 
-		if(( (t*dt) > 0.5f) && ((t*dt) <= 1.0f) ){    // on peut rajouter une impulsion en même temps qu'on change la note (deux mains en meme temps)
+		if(( (t*dt) > 0.5f) && ((t*dt) <= 1.0f) ){
 			
 			alpha = rho/(dt*dt) * (dt/0.01f);	
 			
