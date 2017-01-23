@@ -90,7 +90,7 @@ int main(int argc, char *argv[]){
 
 	int i0 = 20;
         int i_note1 = 60;
-	int i_note2 = 50;
+	int i_note2 = 40;
         float alpha;
 
 	
@@ -98,24 +98,47 @@ int main(int argc, char *argv[]){
 		
 		next(K1, K2, K3);	
 	
-		if( (t*dt) < 0.02f){
+		/*if( (t*dt) < 0.02f){
 			uc[i0] += t*Fmax*dt*dt / (0.02f*freq*rho);
-		}
+		}*/
 
-		if(( (t*dt) > 0.5f) && ((t*dt) <= 1.0f) ){    // on peut rajouter une impulsion en même temps qu'on change la note (deux mains en meme temps)
+		/*if(( (t*dt) > 0.5f) && ((t*dt) <= 1.0f) ){    // on peut rajouter une impulsion en même temps qu'on change la note (deux mains en meme temps)
 			
 			alpha = rho/(dt*dt) * (dt/0.01f);	
 			
 			//uc[i_note] += (dt*dt/rho) * (-alpha * uc[i_note]);
 			uc[i_note1] += -0.05f * uc[i_note1];
+		}*/
+
+		if(( (t*dt) > 1.0f) && ((t*dt) < 1.02f) ){    
+			
+			uc[i0] += t*Fmax*dt*dt / (0.02f*freq*rho);
 		}
 
-		if( (t*dt) > 1.0f){
+		if( ( (t*dt) > 2.0f) && ((t*dt) < 3.0f)){
 			
 			alpha = rho/(dt*dt) * (dt/0.01f);	
 			
 			
-			uc[i_note2] += -0.05f * uc[i_note2];
+			uc[i_note1] += -0.1f * uc[i_note1];
+		}
+
+		if(( (t*dt) > 2.0f) && ((t*dt) < 2.02f) ){    
+			
+			uc[i0] += t*Fmax*dt*dt / (0.02f*freq*rho);
+		}
+
+		/*if( (t*dt) > 3.0f){
+			
+			alpha = rho/(dt*dt) * (dt/0.01f);	
+			
+			
+			uc[i_note2] += -0.1f * uc[i_note2];
+		}*/
+
+		if(( (t*dt) > 3.0f) && ((t*dt) < 3.02f) ){    
+			
+			uc[i0] += t*Fmax*dt*dt / (0.02f*freq*rho);
 		}
 
 		son[t] = uc[longueur / 3];
