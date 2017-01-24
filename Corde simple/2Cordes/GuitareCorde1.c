@@ -149,14 +149,14 @@ int main(int argc, char *argv[]){
 		note(t, 7.0f, 8.0f, i_sol, i0,  rho, dt, Fmax, freq);
 		note(t, 8.0f, 10.0f, i_la_octave_sup, i0,  rho, dt, Fmax, freq);*/
 
-		note(t, 1.0f, 2.0f, i_do, i0,  rho, dt, Fmax, freq);
-		note(t, 2.0f, 3.0f, i_do, i0,  rho, dt, Fmax, freq);
-		note(t, 3.0f, 4.0f, i_do, i0,  rho, dt, Fmax, freq);
-		note(t, 4.0f, 5.0f, i_do, i0,  rho, dt, Fmax, freq);
-		note(t, 5.0f, 6.0f, i_do, i0,  rho, dt, Fmax, freq);
-		note(t, 6.0f, 7.0f, i_do, i0,  rho, dt, Fmax, freq);
-		note(t, 7.0f, 8.0f, i_do, i0,  rho, dt, Fmax, freq);
-		note(t, 8.0f, 10.0f, i_do, i0, rho, dt, Fmax, freq);
+		note(t, 1.0f, 2.0f, i_la, i0,  rho, dt, Fmax, freq);
+		note(t, 2.0f, 3.0f, i_la, i0,  rho, dt, Fmax, freq);
+		note(t, 3.0f, 4.0f, i_la, i0,  rho, dt, Fmax, freq);
+		note(t, 4.0f, 5.0f, i_la, i0,  rho, dt, Fmax, freq);
+		note(t, 5.0f, 6.0f, i_la, i0,  rho, dt, Fmax, freq);
+		note(t, 6.0f, 7.0f, i_la, i0,  rho, dt, Fmax, freq);
+		note(t, 7.0f, 8.0f, i_la, i0,  rho, dt, Fmax, freq);
+		note(t, 8.0f, 10.0f, i_la, i0, rho, dt, Fmax, freq);
 
 
 		

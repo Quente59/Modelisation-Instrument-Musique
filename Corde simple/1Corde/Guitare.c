@@ -67,6 +67,9 @@ void note(int t, float t_min, float t_max, int indiceNote, int i0, float rho, fl
 
 int main(int argc, char *argv[]){
 	
+	float p = 0.6;
+
+
 	int freq = 44100; // on prend des entiers car on a des tableaux qui utilisent ces variables
 	int duration = 10; // on peut utiliser un define --> #define duration 1 (pas de point-virgule)
 
@@ -78,7 +81,7 @@ int main(int argc, char *argv[]){
 	float rho = 8000.0f;	
 	float mu_air = 1.0e-3;
 	float delta_air = 2.0e-3;
-	float mu_visc = 89.0f; //89
+	float mu_visc = 89.0f/2; //89
 
 	float K1 = epsilon*E*dt*dt / (rho*dx*dx);
 	float K2 = mu_air*dt / (3.14f*delta_air*rho);
@@ -87,7 +90,7 @@ int main(int argc, char *argv[]){
 	float s1[longueur];
 	float s3[longueur];
 
-	float Fmax = 1.0e9f;
+	float Fmax = 1.0e9f*2;
 
 	float s2[longueur];
 	us = s2;
@@ -121,13 +124,14 @@ int main(int argc, char *argv[]){
 	int i0 = 20;
 
 	int i_la = 101;
-        int i_si = 91;
-	int i_do = 80;
-	int i_re = 76;
-	int i_mi = 68;
-	int i_fa = 60;
-	int i_sol = 54;
-	int i_la_octave_sup = 51;
+        int i_si = 91;	//91
+	int i_do = 81;	//80
+	int i_do_d = 77;	//78
+	int i_re = 73; //76
+	int i_mi = 68;	//68
+	int i_fa = 61;	//60
+	int i_sol = 54;	//54
+	int i_la_octave_sup = 51;	//51
 
 
         float alpha;
@@ -149,15 +153,35 @@ int main(int argc, char *argv[]){
 		note(t, 7.0f, 8.0f, i_sol, i0,  rho, dt, Fmax, freq);
 		note(t, 8.0f, 10.0f, i_la_octave_sup, i0,  rho, dt, Fmax, freq);*/
 
-		note(t, 1.0f, 2.0f, i_la, i0,  rho, dt, Fmax, freq);
-		note(t, 2.0f, 3.0f, i_si, i0,  rho, dt, Fmax, freq);
-		note(t, 3.0f, 4.0f, i_do, i0,  rho, dt, Fmax, freq);
-		note(t, 4.0f, 5.0f, i_la, i0,  rho, dt, Fmax, freq);
-		note(t, 5.0f, 6.0f, i_la, i0,  rho, dt, Fmax, freq);
-		note(t, 6.0f, 7.0f, i_si, i0,  rho, dt, Fmax, freq);
-		note(t, 7.0f, 8.0f, i_do, i0,  rho, dt, Fmax, freq);
-		note(t, 8.0f, 10.0f, i_la, i0, rho, dt, Fmax, freq);
-
+		note(t, 1.0f*p, 1.5f*p, i_do, i0,  rho, dt, Fmax, freq);
+		note(t, 1.5f*p, 2.0f*p, i_do, i0,  rho, dt, Fmax, freq);
+		note(t, 2.0f*p, 2.5f*p, i_do_d, i0,  rho, dt, Fmax, freq);
+		note(t, 2.5f*p, 3.5f*p, i_re, i0,  rho, dt, Fmax, freq);
+		note(t, 3.5f*p, 4.0f*p, i_fa, i0,  rho, dt, Fmax, freq);
+		note(t, 4.0f*p, 4.5f*p, i_re, i0,  rho, dt, Fmax, freq);
+		note(t, 4.5f*p, 5.0f*p, i_fa, i0,  rho, dt, Fmax, freq);
+		note(t, 5.0f*p, 5.5f*p, i_re, i0, rho, dt, Fmax, freq);
+		note(t, 5.5f*p, 6.0f*p, i_re, i0,  rho, dt, Fmax, freq);
+		note(t, 6.0f*p, 6.5f*p, i_do_d, i0,  rho, dt, Fmax, freq);
+		note(t, 6.5f*p, 7.0f*p, i_do, i0,  rho, dt, Fmax, freq);
+		note(t, 7.0f*p, 7.5f*p, i_sol, i0,  rho, dt, Fmax, freq);
+		note(t, 7.5f*p, 8.0f*p, i_do, i0,  rho, dt, Fmax, freq);
+		note(t, 8.0f*p, 9.0f*p, i_do, i0,  rho, dt, Fmax, freq);
+		note(t, 9.0f*p, 9.5f*p, i_sol, i0,  rho, dt, Fmax, freq);
+		note(t, 9.5f*p, 10.0f*p, i_do, i0,  rho, dt, Fmax, freq);
+		note(t, 10.0f*p, 10.5f*p, i_do_d, i0,  rho, dt, Fmax, freq);
+		note(t, 10.5f*p, 11.5f*p, i_re, i0,  rho, dt, Fmax, freq);
+		note(t, 11.5f*p, 12.0f*p, i_fa, i0,  rho, dt, Fmax, freq);
+		note(t, 12.0f*p, 12.5f*p, i_re, i0,  rho, dt, Fmax, freq);
+		note(t, 12.5f*p, 13.0f*p, i_fa, i0,  rho, dt, Fmax, freq);
+		note(t, 13.0f*p, 13.5f*p, i_re, i0, rho, dt, Fmax, freq);
+		note(t, 13.5f*p, 14.0f*p, i_re, i0,  rho, dt, Fmax, freq);
+		note(t, 14.0f*p, 14.5f*p, i_do_d, i0,  rho, dt, Fmax, freq);
+		note(t, 14.5f*p, 15.0f*p, i_do, i0,  rho, dt, Fmax, freq);
+		note(t, 15.0f*p, 15.5f*p, i_sol, i0,  rho, dt, Fmax, freq);
+		note(t, 15.5f*p, 16.0f*p, i_do, i0,  rho, dt, Fmax, freq);
+		note(t, 16.0f*p, 17.0f*p, i_do, i0,  rho, dt, Fmax, freq);
+		note(t, 17.0f*p, 17.5f*p, i_sol, i0,  rho, dt, Fmax, freq);
 
 		
 
