@@ -35,10 +35,40 @@ void next(float K1, float K2, float K3){
 
 }
 
+
+void note(int t, float t_min, float t_max, int indiceNote, int i0, float rho, float dt, float Fmax, int freq){
+	
+	if (indiceNote == 101){
+		
+		if(( (t*dt) > t_min) && ((t*dt) < (t_min + 0.02f)) ){    	// on rajoute une impulsion en même temps qu'on change la note (deux mains en meme temps)
+			
+			uc[i0] += t*Fmax*dt*dt / (0.02f*freq*rho);
+		}
+	}
+
+	else{
+
+		if(( (t*dt) > t_min) && ((t*dt) < (t_min + 0.02f)) ){    
+			
+			uc[i0] += t*Fmax*dt*dt / (0.02f*freq*rho);
+		}	
+
+
+		if( ( (t*dt) > t_min) && ((t*dt) < t_max)){
+						
+			//alpha = rho/(dt*dt) * (dt/0.01f);
+	
+			uc[indiceNote] += -0.1f * uc[indiceNote];
+		}
+	}	
+}
+
+	
+
 int main(int argc, char *argv[]){
 	
 	int freq = 44100; // on prend des entiers car on a des tableaux qui utilisent ces variables
-	int duration = 5; // on peut utiliser un define --> #define duration 1 (pas de point-virgule)
+	int duration = 10; // on peut utiliser un define --> #define duration 1 (pas de point-virgule)
 
 
 	float E = 1.0e8;
@@ -89,8 +119,17 @@ int main(int argc, char *argv[]){
 	
 
 	int i0 = 20;
-        int i_note1 = 60;
-	int i_note2 = 40;
+
+	int i_la = 101;
+        int i_si = 91;
+	int i_do = 80;
+	int i_re = 76;
+	int i_mi = 68;
+	int i_fa = 60;
+	int i_sol = 54;
+	int i_la_octave_sup = 51;
+
+
         float alpha;
 
 	
@@ -98,48 +137,31 @@ int main(int argc, char *argv[]){
 		
 		next(K1, K2, K3);	
 	
-		/*if( (t*dt) < 0.02f){
-			uc[i0] += t*Fmax*dt*dt / (0.02f*freq*rho);
-		}*/
 
-		/*if(( (t*dt) > 0.5f) && ((t*dt) <= 1.0f) ){    // on peut rajouter une impulsion en même temps qu'on change la note (deux mains en meme temps)
-			
-			alpha = rho/(dt*dt) * (dt/0.01f);	
-			
-			//uc[i_note] += (dt*dt/rho) * (-alpha * uc[i_note]);
-			uc[i_note1] += -0.05f * uc[i_note1];
-		}*/
 
-		if(( (t*dt) > 1.0f) && ((t*dt) < 1.02f) ){    
-			
-			uc[i0] += t*Fmax*dt*dt / (0.02f*freq*rho);
-		}
+		/*firstNote(t, 1.0f, i0,  rho, dt, Fmax, freq);		//correspond à un "la"
 
-		if( ( (t*dt) > 2.0f) && ((t*dt) < 3.0f)){
-			
-			alpha = rho/(dt*dt) * (dt/0.01f);	
-			
-			
-			uc[i_note1] += -0.1f * uc[i_note1];
-		}
+		note(t, 2.0f, 3.0f, i_si, i0,  rho, dt, Fmax, freq);
+		note(t, 3.0f, 4.0f, i_do, i0,  rho, dt, Fmax, freq);
+		note(t, 4.0f, 5.0f, i_re, i0,  rho, dt, Fmax, freq);
+		note(t, 5.0f, 6.0f, i_mi, i0,  rho, dt, Fmax, freq);
+		note(t, 6.0f, 7.0f, i_fa, i0,  rho, dt, Fmax, freq);
+		note(t, 7.0f, 8.0f, i_sol, i0,  rho, dt, Fmax, freq);
+		note(t, 8.0f, 10.0f, i_la_octave_sup, i0,  rho, dt, Fmax, freq);*/
 
-		if(( (t*dt) > 2.0f) && ((t*dt) < 2.02f) ){    
-			
-			uc[i0] += t*Fmax*dt*dt / (0.02f*freq*rho);
-		}
+		note(t, 1.0f, 2.0f, i_la, i0,  rho, dt, Fmax, freq);
+		note(t, 2.0f, 3.0f, i_si, i0,  rho, dt, Fmax, freq);
+		note(t, 3.0f, 4.0f, i_do, i0,  rho, dt, Fmax, freq);
+		note(t, 4.0f, 5.0f, i_la, i0,  rho, dt, Fmax, freq);
+		note(t, 5.0f, 6.0f, i_la, i0,  rho, dt, Fmax, freq);
+		note(t, 6.0f, 7.0f, i_si, i0,  rho, dt, Fmax, freq);
+		note(t, 7.0f, 8.0f, i_do, i0,  rho, dt, Fmax, freq);
+		note(t, 8.0f, 10.0f, i_la, i0, rho, dt, Fmax, freq);
 
-		/*if( (t*dt) > 3.0f){
-			
-			alpha = rho/(dt*dt) * (dt/0.01f);	
-			
-			
-			uc[i_note2] += -0.1f * uc[i_note2];
-		}*/
 
-		if(( (t*dt) > 3.0f) && ((t*dt) < 3.02f) ){    
-			
-			uc[i0] += t*Fmax*dt*dt / (0.02f*freq*rho);
-		}
+		
+
+
 
 		son[t] = uc[longueur / 3];
 	}
