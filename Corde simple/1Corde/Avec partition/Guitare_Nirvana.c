@@ -206,8 +206,8 @@ int main(int argc, char *argv[]){
 		if(notes[i] == 'l'){
 				notes[i] = i_la;
 		}			
-		if(notes[i] == 's'){
-				notes[i] = i_sol;
+		if(notes[i] == 'w'){
+				notes[i] = i_si;
 		}			
 		if(notes[i] == 'x'){
 				notes[i] = i_do_d;
