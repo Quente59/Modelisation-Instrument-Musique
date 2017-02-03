@@ -21,10 +21,7 @@ void next(float K1, float K2, float K3){
 
 	}
 		
-	/*for(int i=1; i< (longueur - 1); ++i){
-			up[i] = uc[i];
-			uc[i] = us[i];
-	}*/
+
 
 	float *up_backup = up;
 	up = uc;
@@ -56,7 +53,7 @@ void note(int t, float t_min, float t_max, int indiceNote, int i0, float rho, fl
 
 		if( ( (t*dt) > t_min) && ((t*dt) < t_max)){
 						
-			//alpha = rho/(dt*dt) * (dt/0.01f);
+	
 	
 			uc[indiceNote] += -0.1f * uc[indiceNote];
 		}
@@ -68,7 +65,7 @@ void note(int t, float t_min, float t_max, int indiceNote, int i0, float rho, fl
 int main(int argc, char *argv[]){
 	
 	int freq = 44100; // on prend des entiers car on a des tableaux qui utilisent ces variables
-	int duration = 10; // on peut utiliser un define --> #define duration 1 (pas de point-virgule)
+	int duration = 10; 
 
 
 	float E = 1.0e8;
@@ -138,17 +135,6 @@ int main(int argc, char *argv[]){
 		next(K1, K2, K3);	
 	
 
-
-		/*firstNote(t, 1.0f, i0,  rho, dt, Fmax, freq);		//correspond à un "la"
-
-		note(t, 2.0f, 3.0f, i_si, i0,  rho, dt, Fmax, freq);
-		note(t, 3.0f, 4.0f, i_do, i0,  rho, dt, Fmax, freq);
-		note(t, 4.0f, 5.0f, i_re, i0,  rho, dt, Fmax, freq);
-		note(t, 5.0f, 6.0f, i_mi, i0,  rho, dt, Fmax, freq);
-		note(t, 6.0f, 7.0f, i_fa, i0,  rho, dt, Fmax, freq);
-		note(t, 7.0f, 8.0f, i_sol, i0,  rho, dt, Fmax, freq);
-		note(t, 8.0f, 10.0f, i_la_octave_sup, i0,  rho, dt, Fmax, freq);*/
-
 		note(t, 1.0f, 2.0f, i_sol, i0,  rho, dt, Fmax, freq);
 		note(t, 2.0f, 3.0f, i_sol, i0,  rho, dt, Fmax, freq);
 		note(t, 3.0f, 4.0f, i_sol, i0,  rho, dt, Fmax, freq);
@@ -166,17 +152,7 @@ int main(int argc, char *argv[]){
 		son[t] = uc[longueur / 3];
 	}
 
-	/*fichier_son = fopen("sortie.dat", "w");
-	for (int i=0; i<(longueur - 1); i++){
-		fprintf(fichier_son, "%f, ", uc[i]);
-	}
-	fclose(fichier_son);
-	printf("\n");
-	return 0;
-	
-	// ici, on a enregistré les positions des points de la corde au bout d'une seconde
 
-	*/
 
 	fichier_son = fopen("sortieCorde2.dat", "w");
 	for (t=0; t<freq*duration; t++){
@@ -186,7 +162,7 @@ int main(int argc, char *argv[]){
 	printf("\n");
 	return 0;
 
-	// ici, on a enregistré le son au point position 26
+
 	
 	
 
