@@ -1,4 +1,4 @@
-Pour la partition :  
+Pour la partition (écriture Quentin) :  
 - l : la  
 - w : si  
 - d : do  
@@ -8,3 +8,11 @@ Pour la partition :
 - f : fa  
 - s : sol  
 
+Pour la partition (écriture Caroline) :  
+- A : la  
+- B : si  
+- C : do  
+- D : ré  
+- E : mi  
+- F : fa  
+- G : sol  
